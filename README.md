@@ -106,7 +106,7 @@ Project/
 ## **Prerequisites**
 
 - **C++ Compiler**: A compiler that supports C++11 or higher (e.g., g++, clang++).
-- **SFML Library**: SFML version 2.6.1 installed at `/opt/homebrew/Cellar/sfml/2.6.1` (or adjust the paths accordingly).
+- **SFML Library**: SFML version 2.6.1.
 
 ---
 
@@ -120,13 +120,13 @@ Project/
    brew install sfml
    ```
 
-   Ensure that SFML is installed at `/opt/homebrew/Cellar/sfml/2.6.1`. If it's installed elsewhere, update the paths in the `Makefile`.
+   Ensure that SFML is installed and make necessary adjustments to the `Makefile` if SFML is installed in a different location.
 
 2. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/Dd1235/AABB.git
+   cd AABB
    ```
 
 ---
@@ -275,15 +275,6 @@ After successful compilation, run the application:
   - Ensure all source files are included in the `Makefile`.
   - Verify that the SFML include and library paths are correct.
 
-- **Runtime Errors**:
-  - Check for null pointers or uninitialized components.
-  - Ensure that all entities have the necessary components.
-
-- **SFML Issues**:
-  - If the window doesn't display correctly, verify SFML installation.
-  - Make sure your system supports OpenGL, which SFML uses for rendering.
-
----
 
 ## **Resources**
 

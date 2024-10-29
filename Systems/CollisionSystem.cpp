@@ -30,6 +30,7 @@ std::string shapeTypeToString(ShapeType type)
 }
 
 CollisionSystem::CollisionSystem(ECS &ecs) : ecs(ecs) {}
+
 const std::map<std::pair<Entity *, Entity *>, std::vector<Vector2>> &CollisionSystem::getIntersectionPolygons() const
 {
     return intersectionPolygons;
@@ -37,6 +38,9 @@ const std::map<std::pair<Entity *, Entity *>, std::vector<Vector2>> &CollisionSy
 
 void CollisionSystem::update()
 {
+    // take care of aretefacts
+    collisionPairs.clear(); // Clear previous collision data
+    intersectionPolygons.clear();
     // Build the AABB tree with current entities
     buildAABBTree();
 

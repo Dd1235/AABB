@@ -12,6 +12,7 @@ public:
 
     template <typename T>
     T *getComponent();
+    bool paused = false;
 
 private:
     std::unordered_map<std::type_index, std::shared_ptr<void>> components;

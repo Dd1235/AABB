@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <ctime>
 #include "Utilities/PolygonIntersection.h"
+#include "Utilities/PolygonUtils.h"
 
 // Include ShapeFactory
 #include "Utilities/ShapeFactory.h"
@@ -77,11 +78,14 @@ int main()
     MovementSystem movementSystem(ecs);
 
     // Setup SFML window for visualization
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Collision Detection Visualization");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Collision Detection Visualization", sf::Style::Resize);
     window.setFramerateLimit(60);
 
     // Clock for delta time
     sf::Clock clock;
+
+    // Pause flag
+    bool isPaused = false;
 
     // Game loop
     while (window.isOpen())
@@ -95,32 +99,33 @@ int main()
         {
             if (event.type == sf::Event::Closed)
                 window.close();
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::P)
+                {
+                    isPaused = !isPaused; // Toggle pause state
+                    std::cout << (isPaused ? "Paused" : "Unpaused") << std::endl;
+                }
+            }
+            if (event.type == sf::Event::Resized)
+            {
+                // Optionally, adjust the view to the new window size
+                sf::FloatRect visibleArea(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(visibleArea));
+            }
         }
 
-        // Update systems
-        movementSystem.update(deltaTime);
-        collisionSystem.update();
+        // update the systems
+        if (!isPaused)
+        {
+            sf::Vector2u windowSize = window.getSize();
+            movementSystem.update(deltaTime, windowSize);
+            collisionSystem.update();
+        }
 
         // Clear the window
         window.clear(sf::Color::Black);
-
-        // // Draw entities
-        // for (const auto &entity : ecs.getEntities())
-        // {
-        //     // Check if entity is colliding
-        //     bool isColliding = false;
-        //     Entity *entityPtr = entity.get();
-        //     for (const auto &pair : collisionSystem.getCollisionPairs())
-        //     {
-        //         if (pair.first == entityPtr || pair.second == entityPtr)
-        //         {
-        //             isColliding = true;
-        //             break;
-        //         }
-        //     }
-
-        //     drawEntity(window, entityPtr, isColliding);
-        // }
 
         // Map to store collision polygons for each entity
         std::map<Entity *, std::vector<std::vector<Vector2>>> entityCollisionPolygons;
@@ -188,15 +193,18 @@ void drawEntity(sf::RenderWindow &window, Entity *entity, bool isColliding, cons
     shape.setOutlineThickness(1.0f);
 
     window.draw(shape);
-
-    // Draw intersection polygons
     for (const auto &poly : collisionPolygons)
     {
-        sf::ConvexShape intersectionShape;
         size_t polyVertexCount = poly.size();
         if (polyVertexCount < 3)
             continue; // Not a valid polygon
 
+        // Compute area
+        float area = PolygonUtils::computeArea(poly);
+        if (area < 1.0f)
+            continue; // Skip tiny polygons
+
+        sf::ConvexShape intersectionShape;
         intersectionShape.setPointCount(polyVertexCount);
         for (size_t i = 0; i < polyVertexCount; ++i)
         {

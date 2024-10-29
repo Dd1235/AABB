@@ -4,6 +4,8 @@
 #include "../Math/Vector2.h"
 #include "ShapeType.h"
 
+// provides data for collision detection
+
 struct ColliderComponent
 {
     std::vector<Vector2> vertices; // Local space vertices
